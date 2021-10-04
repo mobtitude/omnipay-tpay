@@ -13,6 +13,11 @@ abstract class AbstractRequest extends OmnipayAbstractRequest
 
     protected $supportedLanguages = array('pl', 'en', 'fr', 'es', 'it', 'ru');
 
+    protected function getHttpMethod()
+    {
+        return 'POST';
+    }
+
     public function getApiKey()
     {
         return $this->getParameter('apiKey');
@@ -113,15 +118,18 @@ abstract class AbstractRequest extends OmnipayAbstractRequest
      */
     public function sendData($data)
     {
-        $data['json'] = 1;
-        $httpRequest = $this->httpClient->post($this->getEndpoint(), null, http_build_query($data));
-        $httpRequest->getCurlOptions();
-        foreach ($data as $key => $value) {
-            $httpRequest->setPostField($key, $value);
+        if ($this->getHttpMethod() === 'GET') {
+            $httpQuery = $data ? ('?' . http_build_query($data)) : null;
+            $url = $this->getEndpoint() . $httpQuery;
+            $body = null;
+        } else {
+            $body = json_encode($data);
+            $url = $this->getEndpoint();
         }
-        $httpResponse = $httpRequest->send();
 
-        return $this->createResponse($httpResponse->getBody());
+        $httpResponse = $this->httpClient->request($this->getHttpMethod(), $url, [], $body);
+
+        return $this->createResponse($httpResponse->getBody()->getContents());
     }
 
     public function getToken()
