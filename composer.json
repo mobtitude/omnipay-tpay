@@ -1,7 +1,7 @@
 {
     "name": "mobtitude/omnipay-tpay",
-    "version": "v2.0.0",
-    "version_normalized": "2.0.0.0",
+    "version": "v3.0.0",
+    "version_normalized": "3.0.0.0",
     "type": "library",
     "description": "Tpay gateway for Omnipay payment processing library",
     "keywords": [
